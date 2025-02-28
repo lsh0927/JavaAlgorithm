@@ -1,3 +1,5 @@
+package dijk;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
-public class Main {
+public class bj1504 {
 	static int N, E;
 	static List<List<int[]>> graph;
 	static final int INF = 200000000; // 충분히 큰 값 설정
