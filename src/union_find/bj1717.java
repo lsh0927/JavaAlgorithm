@@ -40,8 +40,6 @@ public class bj1717 {
 					System.out.println("YES");
 				}
 			}
-
-
 		}
 	}
 	static void union(int a, int b) {
