@@ -101,3 +101,49 @@ public class Main {
 	}
 }
  */
+
+//풀이 추가
+
+/*
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+public class Main {
+
+	static String[] word;
+	static Map<Character,Integer> map= new HashMap<>();
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n= Integer.parseInt(br.readLine());
+		word= new String[n];
+
+		for(int i=0;i<n;i++){
+			word[i]=br.readLine();
+		}
+
+		for(String str: word){
+			for(int i=0;i<str.length();i++){
+				int val=str.length()-i-1;
+				int w= (int)Math.pow(10,val);
+				map.put(str.charAt(i),map.getOrDefault(str.charAt(i),0)+w);
+			}
+		}
+
+		List<Character> keySet= new ArrayList<>(map.keySet());
+		keySet.sort((o1, o2) -> map.get(o2).compareTo(map.get(o1)));
+
+		int sum=0;
+		int idx=9;
+		for(char c: keySet){
+			sum+=map.get(c)*idx--;
+		}
+
+		System.out.println(sum);
+
+	}
+}
+ */
