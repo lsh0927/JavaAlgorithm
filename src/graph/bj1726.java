@@ -1,110 +1,122 @@
 package graph;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class bj1726 {
-	static class Node {
-		int x;
-		int y;
-		int dir;
-		int cnt;
 
-		public Node(int x, int y, int dir, int cnt) {
-			this.x = x;
-			this.y = y;
-			this.dir = dir;
-			this.cnt = cnt;
-		}
-	}
-
-	static int M, N;
+	static int N,M;
 	static int[][] map;
-	// 동(0) 서(1) 남(2) 북(3)
+	static boolean[][][] visited;
 	static int[] dx = {0, 0, 1, -1};
 	static int[] dy = {1, -1, 0, 0};
-	static boolean[][][] visited;
-
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		StringTokenizer st= new StringTokenizer(br.readLine());
 
-		M = Integer.parseInt(st.nextToken());
-		N = Integer.parseInt(st.nextToken());
+		N=Integer.parseInt(st.nextToken());
+		M=Integer.parseInt(st.nextToken());
 
-		map = new int[M + 1][N + 1];
-		visited = new boolean[M + 1][N + 1][4]; // 3차원 방문 배열 (x, y, direction)
+		map= new int[N][M];
+		visited= new boolean[N][M][4];
 
-		for (int i = 1; i <= M; i++) {
-			st = new StringTokenizer(br.readLine());
-			for (int j = 1; j <= N; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
+		for(int i=0;i<N;i++){
+			st= new StringTokenizer(br.readLine());
+			for(int j=0;j<M;j++){
+				map[i][j]=Integer.parseInt(st.nextToken());
 			}
 		}
+		st= new StringTokenizer(br.readLine());
+		int sX= Integer.parseInt(st.nextToken())-1;
+		int sY= Integer.parseInt(st.nextToken())-1;
+		int sDir= Integer.parseInt(st.nextToken())-1;
 
-		st = new StringTokenizer(br.readLine());
-		int sx = Integer.parseInt(st.nextToken());
-		int sy = Integer.parseInt(st.nextToken());
-		int sDir = Integer.parseInt(st.nextToken()) - 1;
+		st= new StringTokenizer(br.readLine());
+		int eX= Integer.parseInt(st.nextToken())-1;
+		int eY= Integer.parseInt(st.nextToken())-1;
+		int eDir= Integer.parseInt(st.nextToken())-1;
 
-		st = new StringTokenizer(br.readLine());
-		int ex = Integer.parseInt(st.nextToken());
-		int ey = Integer.parseInt(st.nextToken());
-		int eDir = Integer.parseInt(st.nextToken()) - 1;
+		Queue<int[]> q= new LinkedList<>();
+		q.add(new int[]{sX,sY,sDir,0});
+		visited[sX][sY][sDir]=true;
 
-		System.out.println(bfs(sx, sy, sDir, ex, ey, eDir));
-	}
+		while(!q.isEmpty()){
+			int[] cur= q.poll();
+			int x= cur[0];
+			int y= cur[1];
+			int dir= cur[2];
+			int cnt= cur[3];
 
-	static int bfs(int sx, int sy, int sDir, int ex, int ey, int eDir) {
-		Queue<Node> q = new LinkedList<>();
-		q.add(new Node(sx, sy, sDir, 0));
-		visited[sx][sy][sDir] = true;
-
-		while (!q.isEmpty()) {
-			Node cur = q.poll();
-
-			// 목적지에 도달하고 방향도 맞으면 종료
-			if (cur.x == ex && cur.y == ey && cur.dir == eDir) {
-				return cur.cnt;
+			if(x==eX && y==eY && dir == eDir){
+				System.out.println(cnt);
+				return;
 			}
 
-			// 동작 1: 현재 방향으로 1, 2, 3칸 이동
-			for (int i = 1; i <= 3; i++) {
-				int nx = cur.x + dx[cur.dir] * i;
-				int ny = cur.y + dy[cur.dir] * i;
+			//동작 1: 현재 이동하는 방향으로 1~3칸 움직이기
+			for(int i=1;i<=3;i++){
+				int nx=  x +dx[dir] * i;
+				int ny=  y +dy[dir] * i;
 
-				// 벽에 부딪히면 더 이상 진행 불가
-				if (nx <= 0 || nx > M || ny <= 0 || ny > N || map[nx][ny] == 1) break;
 
-				// 이미 방문했으면 큐에 추가하지 않음
-				if (!visited[nx][ny][cur.dir]) {
-					visited[nx][ny][cur.dir] = true;
-					q.add(new Node(nx, ny, cur.dir, cur.cnt + 1));
+
+				// if(nx>=0 && nx<N & ny>=0 && ny<M  && map[nx][ny]==0 && !visited[nx][ny][dir]){
+				// 	visited[nx][ny][dir]=true;
+				// 	q.add(new int[]{nx,ny,dir,cnt+1});
+				// }
+
+				//이 루프는 각 거리(1칸, 2칸, 3칸)에 대해 독립적으로 확인하지만,
+				// 로봇이 i=3으로 3칸 움직일 때 중간에 있는 칸(i=1, i=2)에 벽이 있는지는 확인하지 않습니다.
+
+				if(nx < 0 || nx >= N || ny < 0 || ny >= M || map[nx][ny] == 1)
+					break; // 경로를 벗어나거나 벽을 만나면 더 이상 진행 불가
+
+				if(!visited[nx][ny][dir]){
+					visited[nx][ny][dir] = true;
+					q.add(new int[]{nx, ny, dir, cnt+1});
 				}
 			}
 
-			// 동작 2: 방향 전환 (동-서, 남-북 쌍으로 반대 방향 전환 시 명령 두번 필요)
-			for (int nDir = 0; nDir < 4; nDir++) {
-				// 같은 방향이면 무시
-				if (nDir == cur.dir) continue;
 
-				// 방문하지 않은 방향이면 큐에 추가
-				if (!visited[cur.x][cur.y][nDir]) {
-					int turnCost = 1;
-					// 반대 방향으로 회전은 명령 2번 필요
-					if ((cur.dir == 0 && nDir == 1) || (cur.dir == 1 && nDir == 0) ||
-						(cur.dir == 2 && nDir == 3) || (cur.dir == 3 && nDir == 2)) {
-						turnCost = 2;
-					}
-					visited[cur.x][cur.y][nDir] = true;
-					q.add(new Node(cur.x, cur.y, nDir, cur.cnt + turnCost));
+			//동작 2: 왼쪽 혹은 오른쪽으로 방향 바꾸기
+			if(dir==0){
+				if(!visited[x][y][2]){
+					visited[x][y][2]=true;
+					q.add(new int[]{x,y,2,cnt+1});
+				}
+				if(!visited[x][y][3]){
+					visited[x][y][3]=true;
+					q.add(new int[]{x,y,3,cnt+1});
+				}
+			}else if(dir==1){
+				if(!visited[x][y][3]){
+					visited[x][y][3]=true;
+					q.add(new int[]{x,y,3,cnt+1});
+				}
+				if(!visited[x][y][2]){
+					visited[x][y][2]=true;
+					q.add(new int[]{x,y,2,cnt+1});
+				}
+			}else if(dir==2){
+				if(!visited[x][y][1]){
+					visited[x][y][1]=true;
+					q.add(new int[]{x,y,1,cnt+1});
+				}
+				if(!visited[x][y][0]){
+					visited[x][y][0]=true;
+					q.add(new int[]{x,y,0,cnt+1});
 				}
 			}
+			else{
+				if(!visited[x][y][1]){
+					visited[x][y][1]=true;
+					q.add(new int[]{x,y,1,cnt+1});
+				}
+				if(!visited[x][y][0]){
+					visited[x][y][0]=true;
+					q.add(new int[]{x,y,0,cnt+1});
+				}
+			}
+
 		}
-		return -1; // 도달할 수 없는 경우
 	}
 }
