@@ -3,56 +3,64 @@ import java.util.*;
 
 public class Main {
 
-	static class Ball{
-		int idx;
-		int color;
-		int size;
+	static class Node{
+		int from;
+		int to;
+		int cost;
 
-		public Ball(int idx, int color, int size){
-			this.idx=idx;
-			this.color=color;
-			this.size=size;
+		public Node(int from,int to, int cost) {
+			this.from=from;
+			this.to = to;
+			this.cost = cost;
 		}
 	}
-
-	static int N;
-	static Ball[] balls;
+	static int N,M;
+	static int[] parent;
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N=Integer.parseInt(st.nextToken());
-		balls= new Ball[N];
+		st = new StringTokenizer(br.readLine());
+		M=Integer.parseInt(st.nextToken());
 
-		for(int i=0;i<N;i++){
+		parent= new int[N+1];
+		for (int i=1;i<=N;i++){
+			parent[i]=i;
+		}
+		PriorityQueue<Node> pq= new PriorityQueue<>(Comparator.comparingInt(a->a.cost));
+
+		for (int i=0;i<M;i++){
 			st= new StringTokenizer(br.readLine());
-			balls[i]=new Ball(i,Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()));
+			int from= Integer.parseInt(st.nextToken());
+			int to= Integer.parseInt(st.nextToken());
+			int cost= Integer.parseInt(st.nextToken());
+
+			pq.add(new Node(from,to,cost));
+
 		}
 
-		Arrays.sort(balls, Comparator.comparingInt(o -> o.size));
-
-		int[] result= new int[N];
-		int[] color= new int[N];
 		int sum=0;
-		int idx=0;
+		while (!pq.isEmpty()){
+			Node cur= pq.poll();
+			int from= cur.from;
+			int to= cur.to;
+			int cost= cur.cost;
 
-		for(int i=0;i<N;i++){
-			Ball cur= balls[i];
-			while(idx<i && balls[idx].size<cur.size){
-				sum+=cur.size;
-				//현재 cur의 size는 더할 필요없이, 그 이전의 같은 color만 거르면 됨
-				color[balls[idx].color]+= balls[idx].size;
-				idx++;
+			if(find(from)!=find(to)){
+				union(from,to);
+				sum+=cost;
 			}
-			result[i]=sum-color[cur.color];
 		}
 
-
-		// 결과 출력
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < N; i++) {
-			sb.append(result[i]).append('\n');
-		}
-		System.out.print(sb);
-
+		System.out.println(sum);
+	}
+	static int find(int a){
+		if(a==parent[a]) return a;
+		return parent[a]=find(parent[a]);
+	}
+	static void union(int a, int b){
+		a=find(a);
+		b=find(b);
+		if(a!=b) parent[a]=b;
 	}
 }
