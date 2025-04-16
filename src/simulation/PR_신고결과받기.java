@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 class PR_신고결과받기 {
-
-	//진심 뭐하냐 하
 	// static Set<String> visited;
 	//
 	// public int[] solution(String[] id_list, String[] report, int k) {
