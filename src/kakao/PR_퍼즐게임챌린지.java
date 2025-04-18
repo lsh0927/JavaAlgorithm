@@ -1,4 +1,4 @@
-package greedy;
+package kakao;
 
 public class PR_퍼즐게임챌린지 {
 	//최소인 lev을 출력하기 위해선 최솟값부터 시작을...
