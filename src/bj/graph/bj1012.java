@@ -1,7 +1,9 @@
+package bj.graph;
+
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class bj1012 {
 
 	static int[][] map;
 	static int M,N,K;
