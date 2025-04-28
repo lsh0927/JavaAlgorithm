@@ -18,6 +18,10 @@ public class PR_조이스틱 {
 
 				//오른쪽으로 가기 + 왼쪽으로 가기 (2번의 i번 이동 + len-next만큼 이동)
 				move= Math.min(move, (2*i)+(name.length()-next));
+
+				//BBBBAAAAAAAB: 처음부터 뒷부분을 입력하는게 더 빠를수 있음
+				move = Math.min(move, (name.length() - next) * 2 + i);
+
 			}
 
 			answer+=move;
