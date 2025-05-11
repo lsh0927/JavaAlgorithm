@@ -12,15 +12,13 @@ public class 가장큰수 {
 				list.add(String.valueOf(number));
 			}
 
-			Collections.sort(list, new Comparator<String>(){
-				@Override
-				public int compare(String o1, String o2){
-					String st1= o1+o2;
-					String st2= o2+o1;
-
-					return st2.compareTo(st1);
-				}
-			});
+			// Collections.sort(list, (o1, o2) -> {
+			// 	String st1= o1+o2;
+			// 	String st2= o2+o1;
+			//
+			// 	return st2.compareTo(st1);
+			// });
+			Collections.sort(list, (o1,o2)-> (o2+o1).compareTo(o1+o2));
 
 			String answer="";
 			for(String str: list){
